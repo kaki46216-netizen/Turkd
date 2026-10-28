@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: turkdc
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: Dockerfile
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: "3000"
+      - key: SUPABASE_URL
+        value: "https://sgwjybhtpuhseukuwgnc.supabase.co"
+      - key: SUPABASE_PUBLISHABLE_KEY
+        value: "sb_publishable_l8sc4NVMGMfJotoXneAbrw_2sp_p8HP"
+      - key: SUPABASE_SECRET_KEY
+        value: "${SUPABASE_SECRET_KEY}"
+      - key: GMAIL_USER
+        value: "${GMAIL_USER}"   # set in Render dashboard
+      - key: GMAIL_PASS
+        value: "${GMAIL_PASS}"   # set in Render dashboard
+    buildCommand: ""
+    startCommand: ""
