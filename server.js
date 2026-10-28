@@ -7,7 +7,7 @@ const fs = require('fs');
 const os = require('os');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
-const { supabase, syncUserToSupabase } = require('./supabase');
+const { supabase, syncUserToSupabase, loadFromSupabase, saveToSupabase, EMPTY_DB } = require('./supabase');
 
 const app = express();
 const server = http.createServer(app);
@@ -22,41 +22,69 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json({ limit: '100mb' }));
 
 // Health Check for Electron Desktop & Services
+let dbSource = 'initializing';
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime() });
+  res.json({ status: 'ok', uptime: process.uptime(), dbSource: dbSource });
 });
 
 // ----------------------------------------------------
-// DATABASE & PERSISTENCE (database.json)
+// DATABASE & PERSISTENCE
+// Öncelik: 1) Supabase (bulut)  2) database.json (yerel yedek)
 // ----------------------------------------------------
 const DB_PATH = path.join(__dirname, 'database.json');
 
-function loadDatabase() {
+function loadDatabaseLocal() {
   try {
     if (fs.existsSync(DB_PATH)) {
       const data = fs.readFileSync(DB_PATH, 'utf-8');
       return JSON.parse(data);
     }
   } catch (err) {
-    console.error('[DB] Load error, creating fresh state:', err);
+    console.error('[DB] Yerel dosya yükleme hatası:', err);
   }
-  return {
-    users: [], // { id, email, username, tag, passwordHash, avatar, bannerColor, aboutMe, status, customStatus, verified: true }
-    servers: [], // Empty by default! No pre-made fake servers
-    messages: {}, // channelId or dmId -> array of messages
-    friends: {}, // userId -> array of friend userIds
-    friendRequests: [] // { id, fromId, toId, status: 'pending', timestamp }
-  };
+  return { ...EMPTY_DB };
 }
 
-let db = loadDatabase();
+// Başlangıçta boş DB ile başla, async init'te doldurulacak
+let db = { ...EMPTY_DB };
 
+// Supabase'e kaydetme işlemini debounce et (çok sık yazma olmasın)
+let saveTimer = null;
 function saveDatabase() {
+  // 1. Yerel dosyaya her zaman yaz (yedek)
   try {
     fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf-8');
   } catch (err) {
-    console.error('[DB] Save error:', err);
+    // Render'da dosya sistemi yazılamayabilir, sorun değil
   }
+
+  // 2. Supabase'e debounced kaydet (500ms bekle, toplu kaydet)
+  if (supabase) {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      const ok = await saveToSupabase(db);
+      if (!ok) {
+        console.error('[DB] ⚠️ Supabase kaydetme başarısız!');
+      }
+    }, 500);
+  }
+}
+
+// Sunucu başlarken veritabanını yükle (async)
+async function initDatabase() {
+  // Önce Supabase'den yüklemeyi dene
+  const cloudData = await loadFromSupabase();
+  if (cloudData) {
+    db = cloudData;
+    dbSource = 'supabase';
+    console.log(`[DB] ✅ Supabase'den yüklendi! (${db.users.length} kullanıcı, ${db.servers.length} sunucu)`);
+    return;
+  }
+
+  // Supabase başarısız olduysa yerel dosyadan yükle
+  db = loadDatabaseLocal();
+  dbSource = 'local';
+  console.log(`[DB] 📁 Yerel database.json'dan yüklendi. (${db.users.length} kullanıcı, ${db.servers.length} sunucu)`);
 }
 
 // ----------------------------------------------------
@@ -837,7 +865,8 @@ function getNetworkIps() {
 }
 
 // Start Server on all interfaces (0.0.0.0)
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, '0.0.0.0', async () => {
+  await initDatabase();
   const ips = getNetworkIps();
   console.log(`===============================================`);
   console.log(`🚀 Türkdc Sunucusu Çalışıyor!`);
