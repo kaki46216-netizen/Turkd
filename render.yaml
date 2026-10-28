@@ -11,9 +11,9 @@ services:
       - key: PORT
         value: "3000"
       - key: SUPABASE_URL
-        value: "https://sgwjybhtpuhseukuwgnc.supabase.co"
+        value: "https://fcpurlbmufrxqwozmxje.supabase.co"
       - key: SUPABASE_PUBLISHABLE_KEY
-        value: "sb_publishable_l8sc4NVMGMfJotoXneAbrw_2sp_p8HP"
+        value: "sb_publishable_0AGw3KZkEDS_1r_aZKVZsw_HogRlrHE"
       - key: SUPABASE_SECRET_KEY
         value: "${SUPABASE_SECRET_KEY}"
       - key: GMAIL_USER
