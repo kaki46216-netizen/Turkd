@@ -1,0 +1,20 @@
+{
+  "name": "turkdc-site",
+  "version": "1.0.0",
+  "description": "Türkdc - Site Versiyonu (Tarayıcı üzerinden çalışır)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^18.0.9",
+    "express": "^4.21.2",
+    "nodemailer": "^6.10.0",
+    "socket.io": "^4.8.1"
+  },
+  "author": "Türkdc",
+  "license": "ISC"
+}

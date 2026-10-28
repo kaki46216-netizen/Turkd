@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Türkdc</title>
+  <meta name="description" content="HTML, CSS ve JavaScript ile geliştirilmiş Türkdc masaüstü ve web uygulaması.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+
+  <!-- ============================================== -->
+  <!-- AUTHENTICATION OVERLAY (GİRİŞ & KAYIT OL)       -->
+  <!-- ============================================== -->
+  <div class="auth-wrapper" id="auth-wrapper">
+    <div class="auth-bg-art"></div>
+
+    <div class="auth-card" id="auth-card">
+      <div class="auth-logo">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="#5865F2">
+          <path d="M19.73 4.87a18.2 18.2 0 0 0-4.6-1.44c-.21.4-.4.85-.56 1.32-1.74-.26-3.48-.26-5.18 0-.16-.47-.35-.92-.56-1.32-1.63.48-3.2 1-4.6 1.44-2.83 4.2-3.6 8.29-3.21 12.33 1.88 1.39 3.7 2.24 5.48 2.8.44-.6.83-1.25 1.15-1.93-1.12-.42-2.19-.98-3.18-1.66.27-.2.53-.4.78-.62 3.58 1.65 7.46 1.65 11 0 .25.22.51.42.78.62-.99.68-2.06 1.24-3.18 1.66.33.68.72 1.33 1.16 1.93 1.77-.56 3.6-1.41 5.48-2.8.46-4.65-.77-8.7-3.22-12.33zM8.02 15.33c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.09 2.15 2.42 0 1.34-.94 2.42-2.15 2.42zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.09 2.15 2.42 0 1.34-.94 2.42-2.15 2.42z"/>
+        </svg>
+      </div>
+
+      <!-- VIEW 1: LOGIN -->
+      <div class="auth-view" id="auth-view-login">
+        <h2 class="auth-title">Hoş geldin!</h2>
+        <p class="auth-subtitle">Seni tekrar gördüğümüze çok sevindik!</p>
+        <div class="auth-error-banner hidden" id="login-error-banner"></div>
+
+        <form id="form-login" class="auth-form">
+          <div class="form-group">
+            <label for="login-email">E-POSTA <span class="required-star">*</span></label>
+            <input type="email" id="login-email" required autocomplete="email" placeholder="ornek@gmail.com">
+          </div>
+          <div class="form-group">
+            <label for="login-password">ŞİFRE <span class="required-star">*</span></label>
+            <input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••••">
+          </div>
+
+          <button type="submit" class="btn-primary auth-submit-btn">Giriş Yap</button>
+        </form>
+
+        <div class="auth-switch-text">
+          <span>Bir hesaba mı ihtiyacın var?</span>
+          <button type="button" class="auth-link-btn" id="btn-go-to-register">Kayıt Ol</button>
+        </div>
+
+        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-subtle); text-align: center;">
+          <button type="button" class="auth-link-btn" id="btn-open-server-switcher" style="font-size: 12px; color: var(--text-muted);">
+            🌐 Farklı Bir Sunucuya Bağlan (Arkadaşının Sunucusu)
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 2: REGISTER -->
+      <div class="auth-view hidden" id="auth-view-register">
+        <h2 class="auth-title">Hesap Oluştur</h2>
+        <div class="auth-error-banner hidden" id="register-error-banner"></div>
+
+        <form id="form-register" class="auth-form">
+          <div class="form-group">
+            <label for="reg-email">E-POSTA <span class="required-star">*</span></label>
+            <input type="email" id="reg-email" required autocomplete="email" placeholder="senin.hesabin@gmail.com">
+          </div>
+          <div class="form-group">
+            <label for="reg-username">KULLANICI ADI <span class="required-star">*</span></label>
+            <input type="text" id="reg-username" required autocomplete="username" placeholder="Örn: cinar">
+          </div>
+          <div class="form-group">
+            <label for="reg-password">ŞİFRE <span class="required-star">*</span></label>
+            <input type="password" id="reg-password" required minlength="6" autocomplete="new-password" placeholder="En az 6 karakter">
+          </div>
+
+          <button type="submit" class="btn-primary auth-submit-btn" id="btn-submit-register">Devam Et</button>
+        </form>
+
+        <div class="auth-switch-text">
+          <button type="button" class="auth-link-btn" id="btn-go-to-login">Zaten bir hesabın var mı?</button>
+        </div>
+      </div>
+
+      <!-- VIEW 3: EMAIL OTP VERIFICATION -->
+      <div class="auth-view hidden" id="auth-view-verify">
+        <h2 class="auth-title">E-postanı Doğrula</h2>
+        <p class="auth-subtitle" id="verify-subtitle">Adresine 6 haneli bir doğrulama kodu gönderdik.</p>
+        <div class="auth-error-banner hidden" id="verify-error-banner"></div>
+
+        <!-- Notification Banner showing OTP code for instant testing -->
+        <div class="auth-otp-helper" id="auth-otp-helper">
+          <span class="helper-label">Doğrulama Kodun:</span>
+          <span class="helper-code" id="debug-code-display">------</span>
+        </div>
+
+        <form id="form-verify" class="auth-form">
+          <div class="form-group">
+            <label for="verify-code-input">6 HANELİ DOĞRULAMA KODU</label>
+            <input type="text" id="verify-code-input" maxlength="6" class="otp-input" placeholder="123456" required autocomplete="one-time-code">
+          </div>
+
+          <button type="submit" class="btn-primary auth-submit-btn">Doğrula ve Başla</button>
+        </form>
+
+        <div class="auth-switch-text">
+          <button type="button" class="auth-link-btn" id="btn-back-to-register">Geri Dön</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MAIN DISCORD APPLICATION INTERFACE             -->
+  <!-- ============================================== -->
+  <div id="app" class="app-container hidden">
+
+    <!-- 1. SOL EN DIŞ SUNUCU LİSTESİ (GUILDS SIDEBAR) -->
+    <nav class="guilds-nav" aria-label="Sunucular">
+      <!-- Direct Messages / Home Button -->
+      <div class="guild-item active" id="btn-home" data-tooltip="Doğrudan Mesajlar">
+        <div class="guild-pill"></div>
+        <div class="guild-icon home-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+            <path d="M19.73 4.87a18.2 18.2 0 0 0-4.6-1.44c-.21.4-.4.85-.56 1.32-1.74-.26-3.48-.26-5.18 0-.16-.47-.35-.92-.56-1.32-1.63.48-3.2 1-4.6 1.44-2.83 4.2-3.6 8.29-3.21 12.33 1.88 1.39 3.7 2.24 5.48 2.8.44-.6.83-1.25 1.15-1.93-1.12-.42-2.19-.98-3.18-1.66.27-.2.53-.4.78-.62 3.58 1.65 7.46 1.65 11 0 .25.22.51.42.78.62-.99.68-2.06 1.24-3.18 1.66.33.68.72 1.33 1.16 1.93 1.77-.56 3.6-1.41 5.48-2.8.46-4.65-.77-8.7-3.22-12.33zM8.02 15.33c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.09 2.15 2.42 0 1.34-.94 2.42-2.15 2.42zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.09 2.15 2.42 0 1.34-.94 2.42-2.15 2.42z"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="guild-separator"></div>
+
+      <!-- Dynamic Server Icons Container (Starts empty, no pre-made servers!) -->
+      <div class="guild-list" id="guild-list"></div>
+
+      <!-- Add Server Button -->
+      <div class="guild-item action-item" id="btn-add-server" data-tooltip="Bir Sunucu Ekle">
+        <div class="guild-pill"></div>
+        <div class="guild-icon circle-btn add-btn">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Join Server with Invite Code -->
+      <div class="guild-item action-item" id="btn-join-server" data-tooltip="Sunucuya Katıl">
+        <div class="guild-pill"></div>
+        <div class="guild-icon circle-btn explore-btn">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+          </svg>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 2. İÇ SOL PANEL: KANALLAR VE KULLANICI PROFİLİ -->
+    <aside class="sidebar-channels">
+      <header class="sidebar-header" id="sidebar-header">
+        <div class="header-content" id="server-header-info">
+          <span class="server-title" id="current-server-title">Doğrudan Mesajlar</span>
+          <svg class="dropdown-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+
+        <!-- Server Dropdown Menu -->
+        <div class="dropdown-menu hidden" id="server-dropdown-menu">
+          <div class="menu-item highlight" id="menu-create-channel">
+            <span>Kanal Oluştur</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          </div>
+          <div class="menu-item" id="menu-invite">
+            <span>Davet Kodunu Kopyala</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          </div>
+          <div class="menu-item" id="menu-change-server-icon">
+            <span>Sunucu Resmini Değiştir</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <input type="file" id="input-edit-server-icon-file" accept="image/*" class="hidden">
+        </div>
+      </header>
+
+      <!-- Channels Scroller -->
+      <div class="channels-scroller" id="channels-scroller">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- VOICE CONNECTION DOCK (ACTIVE VOICE CALL) -->
+      <div class="voice-connection-dock hidden" id="voice-connection-dock">
+        <div class="voice-status-info">
+          <div class="voice-signal-icon" title="RTC Bağlandı">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="#57f287"><circle cx="12" cy="12" r="6"/></svg>
+          </div>
+          <div class="voice-channel-details">
+            <div class="voice-state-title" id="voice-dock-title">Ses Bağlandı</div>
+            <div class="voice-channel-name" id="voice-dock-channel">Ses Kanalı</div>
+          </div>
+          <button class="voice-disconnect-btn" id="btn-disconnect-voice" title="Bağlantıyı Kes">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+
+        <div class="voice-dock-actions">
+          <button class="dock-action-btn" id="dock-btn-camera" title="Kamera">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            <span>Kamera</span>
+          </button>
+          <button class="dock-action-btn" id="dock-btn-screen" title="Ekranı Paylaş">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span>Ekran Paylaş</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- USER DOCK (BOTTOM LEFT) -->
+      <footer class="user-dock" id="user-dock">
+        <div class="user-info-wrapper" id="btn-self-profile" title="Profil Ayarları">
+          <div class="avatar-wrapper">
+            <img class="user-avatar" id="self-avatar" src="" alt="Avatar">
+            <div class="status-indicator status-online" id="self-status-dot"></div>
+          </div>
+          <div class="user-text-info">
+            <span class="user-displayname" id="self-displayname">Kullanıcı</span>
+            <span class="user-subtext" id="self-subtext">#0000</span>
+          </div>
+        </div>
+
+        <div class="user-controls">
+          <button class="control-btn" id="btn-toggle-mic" title="Sustur">
+            <svg id="icon-mic-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            <svg id="icon-mic-off" class="hidden" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ed4245" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </button>
+          <button class="control-btn" id="btn-toggle-deafen" title="Sağırlaştır">
+            <svg id="icon-deafen-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+            <svg id="icon-deafen-off" class="hidden" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ed4245" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/><path d="M3.5 13A9 9 0 0 1 20.5 8.5M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+          </button>
+          <button class="control-btn" id="btn-open-settings" title="Kullanıcı Ayarları">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
+      </footer>
+    </aside>
+
+    <!-- 3. ANA İÇERİK ALANI -->
+    <main class="main-content">
+
+      <!-- ============================================== -->
+      <!-- TOP HEADER (FRIENDS TABS OR CHANNEL INFO)      -->
+      <!-- ============================================== -->
+      <header class="chat-header">
+        <!-- SERVER CHANNEL HEADER VIEW -->
+        <div class="chat-header-left" id="header-server-channel-view">
+          <span class="channel-icon" id="header-channel-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+          </span>
+          <h2 class="channel-name-title" id="header-channel-name">genel-sohbet</h2>
+          <div class="header-divider"></div>
+          <span class="channel-topic" id="header-channel-topic">Sohbet alanı</span>
+        </div>
+
+        <!-- FRIENDS TABS VIEW (WHEN ON HOME / DIRECT MESSAGES) -->
+        <div class="friends-top-tabs hidden" id="header-friends-view">
+          <div class="friends-header-lead">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Arkadaşlar</span>
+          </div>
+          <div class="header-divider"></div>
+          <div class="friends-tab-buttons">
+            <button class="friends-tab-item active" data-tab="online">Çevrimiçi</button>
+            <button class="friends-tab-item" data-tab="all">Tümü</button>
+            <button class="friends-tab-item" data-tab="pending">
+              <span>Bekleyen</span>
+              <span class="pending-badge hidden" id="pending-requests-count">0</span>
+            </button>
+            <button class="friends-tab-item add-friend-tab" data-tab="add">Arkadaş Ekle</button>
+          </div>
+        </div>
+
+        <div class="chat-header-actions">
+          <!-- Voice Call Action Button (in DMs) -->
+          <button class="header-icon-btn hidden" id="btn-start-dm-voice" title="Sesli Arama Başlat">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </button>
+          <!-- Video Call Action Button (in DMs) -->
+          <button class="header-icon-btn hidden" id="btn-start-dm-video" title="Görüntülü Arama Başlat">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </button>
+          <!-- Member List Toggle -->
+          <button class="header-icon-btn active" id="btn-toggle-members" title="Üye Listesi">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Body Container -->
+      <div class="main-body-wrapper">
+
+        <!-- ============================================== -->
+        <!-- FRIENDS HUB VIEW (ONLINE, ALL, PENDING, ADD)   -->
+        <!-- ============================================== -->
+        <div class="friends-hub-container hidden" id="friends-hub">
+          <!-- SUB-VIEW: ADD FRIEND -->
+          <div class="friends-pane hidden" id="pane-friends-add">
+            <h3 class="add-friend-title">ARKADAŞ EKLE</h3>
+            <p class="add-friend-desc">Türkdc Kullanıcı Adını ve 4 haneli etiketini kullanarak arkadaş ekleyebilirsin.</p>
+
+            <form id="form-add-friend" class="add-friend-form">
+              <div class="add-friend-input-wrapper">
+                <input type="text" id="input-friend-tag" placeholder="Örn: cinar#8899 veya e-posta veya kullanıcı adı" autocomplete="off" required>
+                <button type="submit" class="btn-primary" id="btn-send-friend-request">Arkadaşlık İsteği Gönder</button>
+              </div>
+            </form>
+            <div class="friend-request-alert hidden" id="friend-request-alert"></div>
+
+            <!-- Önerilen Kullanıcılar / Topluluk -->
+            <div class="discover-friends-section" style="margin-top: 24px;">
+              <h4 style="font-size: 12px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.04em; margin-bottom: 12px;">KULLANICILAR VE ÖNERİLER (TEK TIKLA EKLE)</h4>
+              <div class="discover-users-list" id="discover-users-list">
+                <!-- Dynamically loaded user cards -->
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-VIEW: LIST FRIENDS (ONLINE / ALL / PENDING) -->
+          <div class="friends-pane active" id="pane-friends-list">
+            <div class="friends-list-header" id="friends-list-header-title">ÇEVRİMİÇİ — 0</div>
+            <div class="friends-cards-scroller" id="friends-cards-scroller">
+              <!-- Dynamically populated friend cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- LIVE VOICE / VIDEO / SCREEN SHARE STAGE VIEW   -->
+        <!-- ============================================== -->
+        <div class="voice-stage-container hidden" id="voice-stage">
+          <div class="stage-header">
+            <div class="stage-info">
+              <span class="live-pill">CANLI</span>
+              <span class="stage-title" id="stage-channel-name">Genel Ses Odası</span>
+              <span class="stage-participant-count" id="stage-peer-count">1 Katılımcı</span>
+            </div>
+            <div class="stage-view-controls">
+              <button class="stage-ctrl-btn" id="btn-fullscreen-stage" title="Tam Ekran">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Video / Screen Share Grid -->
+          <div class="stage-grid" id="stage-grid"></div>
+
+          <!-- Stage Bottom Controls Overlay -->
+          <div class="stage-controls-bar">
+            <button class="stage-action-btn" id="stage-btn-cam" title="Kamera">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              <span>Kamera</span>
+            </button>
+            <button class="stage-action-btn" id="stage-btn-screen" title="Ekranını Paylaş">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>Ekran Paylaş</span>
+            </button>
+            <button class="stage-action-btn" id="stage-btn-mic" title="Mikrofon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              <span>Sustur</span>
+            </button>
+            <button class="stage-action-btn leave-call-btn" id="stage-btn-leave" title="Yayından Ayrıl">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              <span>Ayrıl</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TEXT CHAT AREA                                 -->
+        <!-- ============================================== -->
+        <div class="chat-area" id="chat-area">
+          <div class="messages-scroller" id="messages-scroller">
+            <div class="channel-welcome-banner" id="channel-welcome">
+              <div class="welcome-hash-circle">
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+              </div>
+              <h1 class="welcome-title" id="welcome-title"># genel-sohbet kanalına hoş geldin!</h1>
+              <p class="welcome-desc" id="welcome-desc">Bu, kanalın başlangıcıdır.</p>
+            </div>
+
+            <div class="messages-list" id="messages-list"></div>
+          </div>
+
+          <div class="typing-indicator-bar" id="typing-indicator-bar"></div>
+
+          <!-- Attachment Preview -->
+          <div class="attachment-preview-box hidden" id="attachment-preview-box">
+            <div class="preview-card">
+              <img id="attachment-preview-img" src="" alt="Görsel">
+              <button class="remove-attachment-btn" id="btn-remove-attachment" title="Kaldır">&times;</button>
+            </div>
+          </div>
+
+          <!-- Chat Input -->
+          <form class="chat-input-form" id="chat-input-form">
+            <div class="chat-input-container">
+              <input type="file" id="file-input" accept="image/*,video/*,audio/*,.pdf,.txt" class="hidden">
+              <button type="button" class="input-action-btn attach-btn" id="btn-attach-file" title="Dosya Ekle">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                </svg>
+              </button>
+
+              <textarea 
+                id="message-input" 
+                class="message-textarea" 
+                rows="1" 
+                placeholder="Mesaj gönder..."
+                autocomplete="off"
+              ></textarea>
+
+              <div class="input-actions-right">
+                <button type="button" class="input-action-btn" id="btn-toggle-emoji" title="Emoji">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                </button>
+                <button type="submit" class="input-action-btn send-btn" id="btn-send-message" title="Gönder">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- RIGHT MEMBERS SIDEBAR -->
+        <aside class="sidebar-members" id="sidebar-members">
+          <div class="members-category">
+            <span class="members-category-title" id="members-online-title">ÇEVRİMİÇİ — 1</span>
+            <div class="members-group" id="members-online-list"></div>
+          </div>
+        </aside>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- FLOATING EMOJI PICKER POPOVER -->
+  <div class="emoji-picker-popover hidden" id="emoji-picker-popover">
+    <div class="emoji-picker-header">
+      <input type="text" placeholder="Emoji Ara..." id="emoji-search-input" class="emoji-search">
+    </div>
+    <div class="emoji-grid" id="emoji-grid"></div>
+  </div>
+
+  <!-- MODAL: YENİ SUNUCU OLUŞTURMA -->
+  <div class="modal-backdrop hidden" id="modal-create-server">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">Sunucunu Oluştur</h2>
+        <p class="modal-subtitle">Kendine ait bir sunucu oluştur ve arkadaşlarınla konuşmaya başla.</p>
+        <button class="modal-close-btn" id="btn-close-server-modal">&times;</button>
+      </div>
+
+      <form id="form-create-server" class="modal-body">
+        <div class="form-group">
+          <label>SUNUCU SİMGESİ</label>
+          <input type="file" id="input-server-icon-file" accept="image/*" class="hidden">
+          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+            <div id="server-icon-preview-box" style="width: 52px; height: 52px; border-radius: 50%; background-color: var(--bg-servers); display: flex; align-items: center; justify-content: center; font-size: 26px; overflow: hidden; border: 2px dashed var(--border-subtle); flex-shrink: 0;">
+              <span id="server-icon-emoji-preview">🚀</span>
+              <img id="server-icon-img-preview" src="" class="hidden" style="width: 100%; height: 100%; object-fit: cover;" alt="Sunucu Simgesi">
+            </div>
+            <button type="button" class="btn-primary" id="btn-upload-server-icon" style="font-size: 13px; padding: 8px 14px;">📁 Bilgisayardan Fotoğraf Yükle</button>
+          </div>
+          <div class="icon-picker-row">
+            <button type="button" class="icon-preset-btn active" data-icon="🚀">🚀</button>
+            <button type="button" class="icon-preset-btn" data-icon="🎮">🎮</button>
+            <button type="button" class="icon-preset-btn" data-icon="💻">💻</button>
+            <button type="button" class="icon-preset-btn" data-icon="⚡">⚡</button>
+            <button type="button" class="icon-preset-btn" data-icon="🔥">🔥</button>
+            <button type="button" class="icon-preset-btn" data-icon="🎧">🎧</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-server-name">SUNUCU ADI</label>
+          <input type="text" id="input-server-name" placeholder="Örn: Cınar'ın Sunucusu" required maxlength="50">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="btn-cancel-server-modal">İptal</button>
+          <button type="submit" class="btn-primary">Oluştur</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: SUNUCUYA KATIL (DAVET KODU İLE) -->
+  <div class="modal-backdrop hidden" id="modal-join-server">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">Bir Sunucuya Katıl</h2>
+        <p class="modal-subtitle">Arkadaşından aldığın davet kodunu aşağıya gir.</p>
+        <button class="modal-close-btn" id="btn-close-join-modal">&times;</button>
+      </div>
+
+      <form id="form-join-server" class="modal-body">
+        <div class="form-group">
+          <label for="input-join-invite">DAVET KODU</label>
+          <input type="text" id="input-join-invite" placeholder="Örn: ABC123" required>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="btn-cancel-join-modal">İptal</button>
+          <button type="submit" class="btn-primary">Sunucuya Katıl</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: SUNUCU ADRESİ DEĞİŞTİR (ARKADAŞININ SUNUCUSUNA BAĞLAN) -->
+  <div class="modal-backdrop hidden" id="modal-server-switcher">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">Sunucu Bağlantısı</h2>
+        <p class="modal-subtitle">Arkadaşınızın açtığı sunucuya bağlanmak için adresi girin.</p>
+        <button class="modal-close-btn" id="btn-close-server-switcher">&times;</button>
+      </div>
+
+      <form id="form-server-switcher" class="modal-body">
+        <div class="form-group">
+          <label for="input-custom-server-url">SUNUCU ADRESİ (URL VEYA IP)</label>
+          <input type="text" id="input-custom-server-url" placeholder="Örn: https://xxxx.loca.lt veya http://192.168.1.35:3000" required>
+          <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">
+            Arkadaşınız <b>Arkadaslarla-Online-Oyna.bat</b> çalıştırdığında ekranda çıkan linki buraya yapıştırabilirsiniz.
+          </span>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="btn-reset-localhost">Varsayılana Dön (localhost)</button>
+          <button type="submit" class="btn-primary">Bağlan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: YENİ KANAL OLUŞTURMA -->
+  <div class="modal-backdrop hidden" id="modal-create-channel">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">Kanal Oluştur</h2>
+        <button class="modal-close-btn" id="btn-close-channel-modal">&times;</button>
+      </div>
+
+      <form id="form-create-channel" class="modal-body">
+        <div class="form-group">
+          <label>KANAL TÜRÜ</label>
+          <div class="channel-type-select">
+            <label class="channel-radio-card active">
+              <input type="radio" name="channelType" value="text" checked>
+              <div class="radio-content">
+                <span class="type-icon">#</span>
+                <div class="type-texts">
+                  <div class="type-title">Metin</div>
+                  <div class="type-desc">Mesajlar ve görseller paylaşın</div>
+                </div>
+              </div>
+            </label>
+            <label class="channel-radio-card">
+              <input type="radio" name="channelType" value="voice">
+              <div class="radio-content">
+                <span class="type-icon">🔊</span>
+                <div class="type-texts">
+                  <div class="type-title">Ses</div>
+                  <div class="type-desc">Sesli konuşun ve ekranınızı paylaşın</div>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-channel-name">KANAL ADI</label>
+          <div class="input-with-prefix">
+            <span class="input-prefix" id="channel-name-prefix">#</span>
+            <input type="text" id="input-channel-name" placeholder="yeni-kanal" required maxlength="30">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="btn-cancel-channel-modal">İptal</button>
+          <button type="submit" class="btn-primary">Kanal Oluştur</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: KULLANICI AYARLARI                      -->
+  <!-- ============================================== -->
+  <div class="settings-modal-backdrop hidden" id="modal-user-settings">
+    <!-- Prominent always-visible fixed close button for ESC & click -->
+    <div class="settings-close-dock">
+      <button class="esc-btn" id="btn-close-settings" title="Ayarları Kapat (ESC)">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <span>ESC</span>
+      </button>
+    </div>
+
+    <div class="settings-modal-container">
+      <aside class="settings-sidebar">
+        <div class="settings-sidebar-content">
+          <div class="settings-header">KULLANICI AYARLARI</div>
+          <button class="settings-tab-btn active" data-tab="account">Hesabım</button>
+          <button class="settings-tab-btn" data-tab="profile">Kullanıcı Profili</button>
+          
+          <div class="settings-separator"></div>
+          <div class="settings-header">UYGULAMA AYARLARI</div>
+          <button class="settings-tab-btn" data-tab="voice">Ses ve Görüntü</button>
+          <button class="settings-tab-btn" data-tab="appearance">Görünüm</button>
+          
+          <div class="settings-separator"></div>
+          <button class="settings-tab-btn danger" id="btn-logout-user">Çıkış Yap</button>
+        </div>
+      </aside>
+
+      <main class="settings-main">
+        <!-- TAB: MY ACCOUNT -->
+        <div class="settings-tab-pane active" id="pane-account">
+          <h2 class="pane-title">Hesabım</h2>
+          
+          <div class="profile-card-preview">
+            <div class="preview-banner" id="settings-preview-banner"></div>
+            <div class="preview-header">
+              <div class="preview-avatar-wrapper">
+                <img id="settings-preview-avatar" src="" alt="Avatar">
+                <div class="preview-status status-online" id="settings-preview-status"></div>
+              </div>
+              <div class="preview-user-details">
+                <h3 id="settings-preview-name">Kullanıcı</h3>
+                <span id="settings-preview-tag">#0000</span>
+              </div>
+            </div>
+          </div>
+
+          <form id="form-settings-profile" class="settings-form">
+            <div class="form-group">
+              <label for="settings-input-username">GÖRÜNEN AD</label>
+              <input type="text" id="settings-input-username" required>
+            </div>
+
+            <div class="form-group">
+              <label for="settings-input-custom-status">ÖZEL DURUM</label>
+              <input type="text" id="settings-input-custom-status" placeholder="Ne yapıyorsun?">
+            </div>
+
+            <div class="form-group">
+              <label>DURUMUNUZ</label>
+              <div class="status-select-grid">
+                <label class="status-radio-option">
+                  <input type="radio" name="userStatus" value="online" checked>
+                  <span class="status-dot online"></span>
+                  <span>Çevrimiçi</span>
+                </label>
+                <label class="status-radio-option">
+                  <input type="radio" name="userStatus" value="idle">
+                  <span class="status-dot idle"></span>
+                  <span>Boşta</span>
+                </label>
+                <label class="status-radio-option">
+                  <input type="radio" name="userStatus" value="dnd">
+                  <span class="status-dot dnd"></span>
+                  <span>Rahatsız Etmeyin</span>
+                </label>
+                <label class="status-radio-option">
+                  <input type="radio" name="userStatus" value="offline">
+                  <span class="status-dot invisible"></span>
+                  <span>Görünmez</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>PROFİL RESMİ (AVATAR)</label>
+              <input type="file" id="input-avatar-file" accept="image/*" class="hidden">
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <button type="button" class="btn-primary" id="btn-upload-avatar" style="font-size: 13px; padding: 8px 14px;">📁 Bilgisayardan Fotoğraf Yükle</button>
+                <span style="font-size: 12px; color: var(--text-muted);">veya hazır karakter seç:</span>
+              </div>
+              <div class="avatar-selection-row">
+                <button type="button" class="avatar-seed-btn" data-seed="felix"><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=felix" alt="1"></button>
+                <button type="button" class="avatar-seed-btn" data-seed="shadow"><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=shadow" alt="2"></button>
+                <button type="button" class="avatar-seed-btn" data-seed="cyber"><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=cyber" alt="3"></button>
+                <button type="button" class="avatar-seed-btn" data-seed="phoenix"><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=phoenix" alt="4"></button>
+                <button type="button" class="avatar-seed-btn" data-seed="gamerx"><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=gamerx" alt="5"></button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="settings-input-banner">PROFİL AFİŞİ</label>
+              <input type="file" id="input-banner-file" accept="image/*" class="hidden">
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <button type="button" class="btn-secondary" id="btn-upload-banner" style="font-size: 13px; padding: 8px 14px; background: var(--bg-servers); border-radius: 4px;">🖼️ Bilgisayardan Afiş Resmi Yükle</button>
+              </div>
+              <div class="color-picker-row">
+                <input type="color" id="settings-input-banner" value="#5865F2">
+                <span class="color-val-label">Afiş Rengi Seç</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="settings-input-about">HAKKIMDA</label>
+              <textarea id="settings-input-about" rows="3" placeholder="Kendinden bahset..."></textarea>
+            </div>
+
+            <div class="settings-save-bar">
+              <button type="submit" class="btn-primary">Değişiklikleri Kaydet</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- TAB: VOICE & VIDEO -->
+        <div class="settings-tab-pane" id="pane-voice">
+          <h2 class="pane-title">Ses ve Görüntü Ayarları</h2>
+
+          <div class="settings-section">
+            <h3 class="section-title">MİKROFON TESTİ</h3>
+            <p class="section-desc">Konuştuğunda gösterge hareket etmelidir.</p>
+            <div class="mic-meter-container">
+              <div class="mic-meter-bar" id="mic-test-bar"></div>
+            </div>
+            <button type="button" class="btn-primary" id="btn-test-mic">Mikrofonu Test Et</button>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">KAMERA AYARLARI</h3>
+            <div class="cam-preview-box">
+              <video id="settings-cam-preview" autoplay playsinline muted></video>
+              <div class="cam-placeholder" id="cam-placeholder">Kamera Önizlemesini Başlat</div>
+            </div>
+            <button type="button" class="btn-primary" id="btn-test-cam">Kamerayı Test Et</button>
+          </div>
+        </div>
+
+        <!-- TAB: APPEARANCE -->
+        <div class="settings-tab-pane" id="pane-appearance">
+          <h2 class="pane-title">Görünüm Ayarları</h2>
+          <div class="theme-select-grid">
+            <label class="theme-card active" data-theme="theme-dark">
+              <div class="theme-preview-box dark-box"></div>
+              <div class="theme-label">
+                <input type="radio" name="theme" value="theme-dark" checked>
+                <span>Koyu (Dark)</span>
+              </div>
+            </label>
+            <label class="theme-card" data-theme="theme-midnight">
+              <div class="theme-preview-box midnight-box"></div>
+              <div class="theme-label">
+                <input type="radio" name="theme" value="theme-midnight">
+                <span>Gece Mavisi (AMOLED)</span>
+              </div>
+            </label>
+            <label class="theme-card" data-theme="theme-light">
+              <div class="theme-preview-box light-box"></div>
+              <div class="theme-label">
+                <input type="radio" name="theme" value="theme-light">
+                <span>Açık (Light)</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: GELEN ÇAĞRI OVERLAY -->
+  <div class="incoming-call-overlay hidden" id="incoming-call-overlay">
+    <div class="incoming-call-card">
+      <div class="caller-avatar-wrapper">
+        <img id="caller-avatar" src="" alt="Arayan">
+        <div class="call-pulse-ring"></div>
+      </div>
+      <div class="caller-name" id="caller-name">Arkadaş</div>
+      <div class="call-type-text" id="call-type-text">Seni Türkdc aramasına çağırıyor...</div>
+
+      <div class="call-action-buttons">
+        <button class="call-btn decline" id="btn-decline-call" title="Reddet">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <button class="call-btn accept" id="btn-accept-call" title="Cevapla">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
