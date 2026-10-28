@@ -22,7 +22,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json({ limit: '100mb' }));
 
 // Health Check for Electron Desktop & Services
-let dbSource = 'initializing';
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime(), dbSource: dbSource });
 });
@@ -32,6 +31,7 @@ app.get('/api/health', (req, res) => {
 // Öncelik: 1) Supabase (bulut)  2) database.json (yerel yedek)
 // ----------------------------------------------------
 const DB_PATH = path.join(__dirname, 'database.json');
+let dbSource = 'initializing'; // 'supabase' veya 'local'
 
 function loadDatabaseLocal() {
   try {
